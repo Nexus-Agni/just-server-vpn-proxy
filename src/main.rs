@@ -4,20 +4,31 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
-fn get_local_ip() -> String {
-    // Try to get the local IP address
-    if let Ok(addrs) = std::net::ToSocketAddrs::to_socket_addrs(&"8.8.8.8:80") {
-        if let Some(addr) = addrs.into_iter().next() {
-            if let Ok(socket) = std::net::UdpSocket::bind("0.0.0.0:0") {
-                if socket.connect(addr).is_ok() {
-                    if let Ok(local_addr) = socket.local_addr() {
-                        return format!("{}:8888", local_addr.ip());
-                    }
+async fn get_public_ip() -> String {
+    // Try to get the public IP address using external services
+    let services = [
+        "https://api.ipify.org",
+        "https://ifconfig.me/ip",
+        "https://icanhazip.com",
+    ];
+    
+    let client = Client::builder()
+        .timeout(Duration::from_secs(5))
+        .build()
+        .unwrap();
+    
+    for service in &services {
+        if let Ok(response) = client.get(*service).send().await {
+            if let Ok(ip) = response.text().await {
+                let ip = ip.trim();
+                if !ip.is_empty() && ip.parse::<std::net::IpAddr>().is_ok() {
+                    return format!("{}:8888", ip);
                 }
             }
         }
     }
-    "127.0.0.1:8888".to_string() // Fallback
+    
+    "unknown:8888".to_string() // Fallback if all services fail
 }
 
 #[derive(Deserialize)]
@@ -80,8 +91,8 @@ async fn proxy_handler(req: web::Json<ProxyRequest>) -> Result<HttpResponse> {
                     
                     println!("HTML content length: {} chars", html.len());
                     
-                    // Get the server's local IP address
-                    let server_ip = get_local_ip();
+                    // Get the server's public IP address
+                    let server_ip = get_public_ip().await;
                     
                     let proxy_response = ProxyResponse {
                         html,
