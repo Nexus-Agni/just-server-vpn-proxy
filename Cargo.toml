@@ -6,8 +6,18 @@ edition = "2024"
 [dependencies]
 actix-web = "4.4"
 actix-cors = "0.6"
-reqwest = { version = "0.11", features = ["json", "gzip"] }
+reqwest = { version = "0.11", features = ["json", "gzip", "brotli", "deflate", "rustls-tls", "cookies"] }
+reqwest_cookie_store = "0.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.0", features = ["full"] }
 url = "2.4"
+pqcrypto-kyber = "0.7"
+pqcrypto-dilithium = "0.5"
+pqcrypto-sphincsplus = "0.7"
+pqcrypto-traits = "0.3"
+base64 = "0.21"
+rand = "0.8"
+sha3 = "0.10"
+urlencoding = "2.1"
+lazy_static = "1.4"

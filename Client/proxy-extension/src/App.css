@@ -1,0 +1,14 @@
+.App {
+  width: 320px;
+  height: 384px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 320px;
+  height: 384px;
+}

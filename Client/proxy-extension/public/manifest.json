@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "PQC Proxy Extension",
+  "version": "1.0.0",
+  "description": "Chrome extension to route traffic through Post-Quantum Cryptography proxy server",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "PQC Proxy Toggle"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "proxy_rules",
+        "enabled": false,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
